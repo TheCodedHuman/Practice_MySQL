@@ -115,7 +115,93 @@ FROM student
 GROUP BY city 
 ORDER BY avg(marks) DESC;	-- observe we used avg(marks) and not marks solely but we can use city here too
 
-SELECT grade FROM student GROUP BY grade 
+
+-- how many students got specific grades
+SELECT grade, count(rollno) FROM student GROUP BY grade;
+SELECT grade, count(rollno) FROM student GROUP BY count(rollno) ORDER BY grade;							-- rollno are different so grouping can't be done on it, so it will throw error
+SELECT grade, count(rollno) FROM student GROUP BY grade ORDER BY count(rollno);
+SELECT grade, count(rollno) FROM student GROUP BY grade ORDER BY grade;
+
+
+-- sometimes we can't use where sometimes, so we can use having in group by CLAUSE
+SELECT city FROM student GROUP BY city;
+SELECT city, count(rollno) FROM student GROUP BY city;
+SELECT city, count(rollno) FROM student GROUP BY city WHERE max(marks) > 90;							-- this will also throw error due to usage of where in group by CLAUSE
+SELECT city, count(rollno) FROM student GROUP BY city HAVING max(marks) > 90;
+
+
+
+/*
+# the general order of writing such clauses so that things work efficiently and effectively
+SELECT <columns>
+FROM <table_name>
+WHERE <condition>
+GROUP BY <columns>
+HAVING <condition>
+ORDER BY <columns> DESC
+LIMIT <value>
+*/
+
+
+SELECT city
+FROM student
+WHERE grade = 'A'
+GROUP BY city
+HAVING max(marks) >= 93
+ORDER BY city DESC;
+
+
+# update query/statement/keyword
+-- let's say if want grade  'A' to become 'outstanding' => 'O')
+UPDATE student SET grade = "O" WHERE grade = 'A';					-- Doing this soleley will tell us that we using safe mode
+
+SET SQL_SAFE_UPDATES = 0;											-- this option is present to stop us from doing such changes that may harm unintentionally
+UPDATE student SET grade = "O" WHERE grade = 'A';					-- now we can run this effortlessly
+
+SELECT marks, grade FROM student;
+
+UPDATE student
+SET marks = 82, grade = 'B'
+WHERE rollno = 105;
+
+UPDATE student
+SET grade = 'B'
+WHERE marks BETWEEN 80 and 90;
+
+UPDATE student
+SET marks = marks + 1;
+
+UPDATE student						-- did this to demonstrate emanual's data
+SET marks = 12
+where rollno = 105;
+
+
+# delete query/statement/keyword
+-- let's say if we want to delete data of student who have marks < 33
+-- just like we use insert to INSERT in ROWS, we use DELETE to delete ROWS 
+########## ALWAYS PERFORM DELETION OF ANYTHING WITH RESPONSIBILITY    ->    SAME APPLIES TO RELATIONSHIPS :)
+DELETE FROM student
+WHERE marks < 33;
+
+SELECT * FROM student;
+
+
+/* the below query/command deletes complete data from the database
+DELETE FROM student; */
+
+
+
+
+# more information about foreign keys
+ 
+
+
+
+
+
+
+
+
 
 
 
