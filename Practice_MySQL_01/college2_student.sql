@@ -179,29 +179,183 @@ where rollno = 105;
 # delete query/statement/keyword
 -- let's say if we want to delete data of student who have marks < 33
 -- just like we use insert to INSERT in ROWS, we use DELETE to delete ROWS 
-########## ALWAYS PERFORM DELETION OF ANYTHING WITH RESPONSIBILITY    ->    SAME APPLIES TO RELATIONSHIPS :)
+########## ALWAYS PERFORM DELETION OF ANYTHING WITH RESPONSIBILITY
 DELETE FROM student
 WHERE marks < 33;
 
 SELECT * FROM student;
 
 
-/* the below query/command deletes complete data from the database
-DELETE FROM student; */
+ /*the below query/command deletes complete data from the database
+SET SQL_SAFE_UPDATES = 0;
+DELETE FROM student; 
+SET SQL_SAFE_UPDATES = 1; */
+
 
 
 
 
 # more information about foreign keys
- 
+SHOW TABLES;
+SELECT * FROM student;
+
+CREATE TABLE IF NOT EXISTS dept(
+	id INT PRIMARY KEY,
+    name VARCHAR(50)
+);
+
+CREATE TABLE IF NOT EXISTS teacher(
+	id INT PRIMARY KEY,
+    name VARCHAR(50),
+    dept_id INT, 								-- First we have to create a column that we can furhter use for foreign key
+    FOREIGN KEY (dept_id) REFERENCES dept(id)	-- then we have to assign that column in foreign key; then we have to connect that column to another table (here dept and in that id)
+);
+
+-- ON DELETE CASCADE				
+-- ON UPDATE CASCADE						-- If we write these two lines too then the changes done in parent table (here dept) then the changes for deletion (due to ON DELETE CASCADE) and on updatation (due to ON UPDATE CASCADE) will be AUTOMATICALLY done (may work like a power but needs to be performed responsibly, as something is getting automated in another table)
+# this is called change cascading 
+
+INSERT INTO dept
+VALUES
+(101, "Maths"),
+(102, "Science");
+
+INSERT INTO teacher
+VALUES
+(101, "Adam", 101),
+(102, "Eve", 102);
+
+SELECT * FROM dept;
+SELECT * FROM teacher;
+
+UPDATE dept
+SET id = 101
+WHERE id = 102;
+
+# here error came because I didn't used on update, delete cascade thing, so I have to drop table and recreate that; althought we have code above
+
+DROP TABLE IF EXISTS teacher;
+
+CREATE TABLE IF NOT EXISTS teacher(
+	id INT PRIMARY KEY,
+    name VARCHAR(50),
+    dept_id INT, 								-- First we have to create a column that we can furhter use for foreign key
+    FOREIGN KEY (dept_id) REFERENCES dept(id)	-- then we have to assign that column in foreign key; then we have to connect that column to another table (here dept and in that id)
+    ON DELETE CASCADE				
+	ON UPDATE CASCADE
+);
 
 
+# Insert values into dept
+INSERT INTO dept
+VALUES
+(101, "Maths"),
+(102, "Science");
+
+# Insert values into teacher
+INSERT INTO teacher
+VALUES
+(101, "Adam", 101),
+(102, "Eve", 102);
+
+# Show tables and data
+SHOW TABLES;
+SELECT * FROM dept;
+SELECT * FROM teacher;
+
+# Update dept id
+UPDATE dept
+SET id = 103
+WHERE id = 101;
+
+# Show updated data
+SELECT * FROM dept;
+SELECT * FROM teacher;
+
+UPDATE dept
+SET id = 108
+WHERE id = 102;
+
+-- so whenever you use foreign keys, always think once about cascading
 
 
+/* From here we are discussing about ALTER command / table modification queries
+we know that schema is design of a table and when we want to change this design/structure
+we use ALTER command
+
+In design,  the columns, their datatype and constraints modification are focused*/
+
+SELECT * FROM student;
+DESCRIBE student;
+
+ALTER TABLE student
+ADD COLUMN age INT;
+
+ALTER TABLE student
+DROP COLUMN age;
 
 
+-- Here we are also using DEFAULT keyword 
+ALTER TABLE student
+ADD COLUMN age INT NOT NULL DEFAULT 19; 
+
+ALTER TABLE student
+MODIFY COLUMN age VARCHAR(2);
+
+INSERT INTO student 
+VALUES
+(107, "Gargi", 68, 100);				# will throw error as we didn't gave grade, but giving age value wasn't even required
+
+ALTER TABLE student
+CHANGE AGE stu_age int;					# now we can enter 3 character 100 age
+
+INSERT INTO student
+(rollno, name, marks, stu_age)
+VALUES
+(107, "Gargi", 68, 100);				# will throw error as we used age VARCHAR(2) but here 100 has 3 characters
+
+ALTER TABLE student
+RENAME TO stu;							# by this we can change the TABLE name
+
+ALTER TABLE stu
+RENAME TO student;							# by this we can change the TABLE name
+
+ALTER TABLE student
+CHANGE name full_name VARCHAR(50);
+
+ALTER TABLE student
+DROP COLUMN stu_age;
+
+DELETE FROM student
+WHERE marks < 80;
+
+SET SQL_SAFE_UPDATES = 0;		# remember we need to use these commands
+SET SQL_SAFE_UPDATES = 1;
+
+ALTER TABLE student
+DROP COLUMN grade; 
+
+SELECT * FROM student;
+
+CREATE TABLE here_we_using_truncate
+(name varchar(5));
+
+INSERT INTO here_we_using_truncate
+VALUES
+("fsdfd"), ("dfdgd"), ("dgfgd"), ("fdgdf"), ("dfgsf");
+
+SELECT * FROM here_we_using_truncate;			# use this after below command too, and observe that name columns existed, but DROP would've deleted table taken each and every data
+
+TRUNCATE TABLE here_we_using_truncate;
+
+/*
+Key Differences: DROP vs DELETE
+Scope: DROP affects the entire table or database, while DELETE affects specific rows.
+
+Reversibility: DROP is permanent and cannot be undone, while DELETE can be reversed if part of a transaction.
+
+Structure: DROP removes the table structure, while DELETE only removes data, leaving the structure intact.
+*/
 
 
-
-
-
+ -- From here we are practicing JOINS
