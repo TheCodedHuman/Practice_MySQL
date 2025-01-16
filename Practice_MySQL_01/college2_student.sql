@@ -358,4 +358,206 @@ Structure: DROP removes the table structure, while DELETE only removes data, lea
 */
 
 
- -- From here we are practicing JOINS
+-- From here we are practicing JOINS
+ 
+CREATE TABLE join_table_1
+(id INT PRIMARY KEY,
+name VARCHAR(50));
+ 
+CREATE TABLE join_table_2
+(id INT PRIMARY KEY,
+course VARCHAR(50));
+ 
+INSERT INTO join_table_1
+(id, name)
+VALUES
+(101, "Adam"),
+(102, "Bob"),
+(103, "Casey");
+ 
+INSERT INTO join_table_2
+(id, course)
+VALUES
+(102, "English"),
+(105, "Math"),
+(103, "Science"),
+(107, "Computer Science");
+ 
+SELECT * FROM join_table_1;
+SELECT * FROM join_table_2;
+ 
+SELECT *
+FROM join_table_1
+INNER JOIN join_table_2						# inner join is also called natural join
+ON join_table_1.id = join_table_2.id;		# its not important that .id shud be same both sides that are just column names
+
+SELECT *
+FROM join_table_1
+JOIN join_table_2							# This is also inner join
+ON join_table_1.id = join_table_2.id;		# its not important that .id shud be same both sides that are just column names
+
+SELECT *
+FROM join_table_1
+NATURAL JOIN join_table_2					# BUT, this will not work
+ON join_table_1.id = join_table_2.id;		# its not important that .id shud be same both sides that are just column names
+
+-- We can also use ALIAS in table view by AS
+
+SELECT *
+FROM join_table_1 AS _1
+INNER JOIN join_table_2 AS _2
+ON _1.id = _2.id;
+ 
+SELECT *
+FROM join_table_1 AS a
+INNER JOIN join_table_2 AS b
+ON a.id = b.id;
+  
+  
+-- Here we are practicing left and right joins (REMEMEBER, left and right joins are too parts of OUTER JOIN)
+SELECT *
+FROM join_table_1
+LEFT JOIN join_table_2
+ON join_table_1.id = join_table_2.id;
+  
+SELECT *
+FROM join_table_1
+LEFT JOIN join_table_2
+ON join_table_1.id = join_table_2.id;
+  
+SELECT *
+FROM join_table_1
+RIGHT JOIN join_table_2
+ON join_table_1.id = join_table_2.id;
+  
+
+-- Here we are practicing FULL JOIN (this is also an OUTER JOIN)
+SELECT *
+FROM join_table_1
+LEFT JOIN join_table_2
+ON join_table_1.id = join_table_2.id
+UNION										# UNION always show unique values
+SELECT *
+FROM join_table_1
+RIGHT JOIN join_table_2
+ON join_table_1.id = join_table_2.id;
+
+
+# But this below one is wrong (eventhough in ORACLE, MicroSoft SQL this may work)
+SELECT *
+FROM join_table_1
+OUTER JOIN join_table_2
+ON join_table_1.id = join_table_2.id;
+
+SELECT *
+FROM join_table_1
+FULL OUTER JOIN join_table_2
+ON join_table_1.id = join_table_2.id;
+
+SELECT *
+FROM join_table_1
+FULL JOIN join_table_2
+ON join_table_1.id = join_table_2.id;
+
+
+-- But what if we want an EXCLUSIVE data of a table
+# Here for EXCLUSIVE Left
+SELECT *
+FROM join_table_1
+LEFT JOIN join_table_2
+ON join_table_1.id = join_table_2.id
+WHERE join_table_2.id IS NULL;					# for right intersection/common is null
+
+# Here for EXCLUSIVE Right
+SELECT *
+FROM join_table_1
+RIGHT JOIN join_table_2
+ON join_table_1.id = join_table_2.id
+WHERE join_table_1.id IS NULL;					# for left intersection/common is null
+
+
+# Same Purpose Different Query
+SELECT *
+FROM join_table_2
+RIGHT JOIN join_table_1
+ON join_table_2.id = join_table_1.id
+WHERE join_table_2.id IS NULL;
+
+SELECT *
+FROM join_table_2
+LEFT JOIN join_table_1
+ON join_table_2.id = join_table_1.id
+WHERE join_table_1.id IS NULL;
+
+ 
+-- But what if we wanted all the information EXCEPT the intersection/common data
+SELECT *
+FROM join_table_1
+LEFT JOIN join_table_2
+ON join_table_1.id = join_table_2.id
+WHERE join_table_2.id IS NULL
+
+UNION													# This statement is incorrect because two queries are performed differently leading to redundant exclusive data
+
+SELECT *
+FROM join_table_2
+RIGHT JOIN join_table_1
+ON join_table_2.id = join_table_1.id
+WHERE join_table_1.id IS NULL;
+
+ 
+ 
+-- Select all information except the intersection/common data
+SELECT *
+FROM join_table_1
+LEFT JOIN join_table_2
+ON join_table_1.id = join_table_2.id
+WHERE join_table_2.id IS NULL
+
+UNION													# This is correct					
+
+SELECT *
+FROM join_table_2
+LEFT JOIN join_table_1
+ON join_table_2.id = join_table_1.id
+WHERE join_table_1.id IS NULL;
+
+
+# Here we are practicing about SELF JOIN
+CREATE TABLE employee(
+id INT PRIMARY KEY,
+name VARCHAR(50),
+manager_id INT
+);
+ 
+INSERT INTO employee
+(id, name, manager_id)
+VALUES
+(101, "Adam", 103),
+(102, "Bob", 104),
+(103, "Casey", NULL),
+(104, "Donald", 103);
+ 
+SELECT *
+FROM employee							# Aliasing is important that's why this is wrong
+JOIN employee
+ON employee.id = employee.manager_id;
+ 
+SELECT *
+FROM employee as a						# Aliasing is important
+JOIN employee as b
+ON a.id = b.manager_id;
+ 
+# for more simplicity we can give ALIAS to specific columns
+SELECT a.name AS Manager_Name, b.name
+FROM employee as a
+JOIN employee as b
+ON a.id = b.manager_id
+
+
+# From here we are practicing UNION and its condition to be used
+ 
+ 
+ 
+ 
+ 
