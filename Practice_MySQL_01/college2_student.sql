@@ -396,10 +396,16 @@ FROM join_table_1
 JOIN join_table_2							# This is also inner join
 ON join_table_1.id = join_table_2.id;		# its not important that .id shud be same both sides that are just column names
 
+-- BUT, natural join is a type of inner join that automatically selects the columns which have same name and datatype as
 SELECT *
 FROM join_table_1
-NATURAL JOIN join_table_2					# BUT, this will not work
-ON join_table_1.id = join_table_2.id;		# its not important that .id shud be same both sides that are just column names
+NATURAL JOIN join_table_2;
+
+
+SELECT *
+FROM join_table_1
+NATURAL JOIN join_table_2;					# BUT, this will not work
+ON join_table_1.id = join_table_2.id;		# its not important that .id {name of column} shud be same both sides that are just column names
 
 -- We can also use ALIAS in table view by AS
 
@@ -552,12 +558,25 @@ ON a.id = b.manager_id;
 SELECT a.name AS Manager_Name, b.name
 FROM employee as a
 JOIN employee as b
-ON a.id = b.manager_id
+ON a.id = b.manager_id;
 
 
 # From here we are practicing UNION and its condition to be used
+-- ...
  
  
- 
- 
- 
+
+# Here we are practicing views in MySQL
+SELECT * FROM student;
+
+-- I am changing the column name just because of my personal sake, there can be any column name that corresponds to the actual view usage
+ALTER TABLE student
+CHANGE full_name name VARCHAR(50);
+
+
+CREATE VIEW view1 AS
+SELECT rollno, name, marks FROM student;
+
+SELECT * FROM view1;
+
+DROP VIEW view1;
